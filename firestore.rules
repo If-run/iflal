@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Each owner can only read/write their own user profile document.
+    match /users/{uid} {
+      allow read, update: if isSignedIn() && request.auth.uid == uid;
+      allow create: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Each owner can only read/write their own settings document.
+    match /settings/{uid} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Business-data collections (phones, accessories, customers, sales,
+    // expenses, suppliers, purchases) are added to these rules module by
+    // module, each following the same ownerId-scoped pattern documented
+    // in ARCHITECTURE.md — no other collections exist yet in Module 1.
+  }
+}

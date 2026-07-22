@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Photo uploads (product photos, IMEI photos) are introduced in the
+    // Inventory module (Module 4/5). Rules will require the path to be
+    // scoped under the authenticated user's own uid, e.g.:
+    //   match /{ownerId}/phones/{phoneId}/{fileName} {
+    //     allow read, write: if request.auth != null && request.auth.uid == ownerId;
+    //   }
+    // No storage paths are in use yet in Module 1, so nothing is allowed.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
